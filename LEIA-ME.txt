@@ -1,0 +1,26 @@
+ECO JARI - Mapa OpenStreetMap + banco compartilhado (Firebase)
+Sem cartão de crédito e sem chave de mapa.
+
+PASSO 1 - Banco de dados compartilhado (Firebase, plano gratuito)
+1. Acesse console.firebase.google.com e crie um projeto (ex.: eco-jari).
+2. Menu "Criação" > "Firestore Database" > Criar banco de dados > modo de PRODUÇÃO.
+3. Aba "Regras": apague tudo, cole o conteúdo de regras-firestore.txt e clique em Publicar.
+   (Qualquer pessoa pode ler e criar denúncias, mas só pode mudar o campo "limpo".)
+4. Engrenagem > Configurações do projeto > "Seus apps" > ícone </> (Web) > registre o app.
+5. Copie apiKey, authDomain, projectId e appId para o arquivo config.js.
+
+PASSO 2 - Publicar (GitHub Pages)
+1. Crie um repositório público no GitHub e envie TODOS os arquivos desta pasta.
+2. Settings > Pages > Branch "main" > Save.
+3. Link final: https://SEU-USUARIO.github.io/NOME-DO-REPOSITORIO/
+4. Gere um QR code do link para o cartaz da feira.
+
+INSTALAR NO CELULAR
+- Android (Chrome): menu ⋮ > "Instalar app".
+- iPhone (Safari): Compartilhar > "Adicionar à Tela de Início".
+
+OBSERVAÇÕES
+- Sem preencher o config.js, tudo funciona em modo demonstração, com pontos de exemplo salvos só no celular.
+- O mapa é do OpenStreetMap (gratuito). Para uso leve, como uma feira, não há problema; o crédito
+  "© OpenStreetMap" já aparece no mapa e deve ser mantido.
+- Precisa de internet para carregar o mapa.
