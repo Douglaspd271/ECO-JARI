@@ -136,12 +136,12 @@ const $=s=>document.querySelector(s);
 const CFG=window.ECO_CONFIG||{},ok=v=>v&&!/COLE/.test(v);
 const cloud=!!(CFG.firebase&&ok(CFG.firebase.projectId)&&ok(CFG.firebase.apiKey));
 const TYPES={plastico:{n:"Plástico",e:"🧴",c:"#1e88e5"},eletronico:{n:"Eletrônico",e:"🔌",c:"#8e24aa"},organico:{n:"Orgânico",e:"🍌",c:"#7a5646"},entulho:{n:"Entulho",e:"🧱",c:"#f57c00"},outros:{n:"Outros",e:"🗑️",c:"#546e7a"}};
-const C0={lat:-0.805,lng:-52.5},KEY="ecojari_v1",rnd=Math.random;
+const C0={lat:-0.9378,lng:-52.4303},KEY="ecojari_v2",rnd=Math.random;
 const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const ago=t=>{const m=(Date.now()-t)/6e4;return m<2?"agora":m<60?(m|0)+" min":m<1440?((m/60)|0)+" h":((m/1440)|0)+" d"};
 function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("on"),2800)}
 let pts=[],sel=null,showHeat=true,map=null,db=null,F=null,fitted=false,circles=[];const markers=new Map();
-function seed(){const hs=[[-0.803,-52.498,8],[-0.812,-52.513,5],[-0.797,-52.488,3]],ks=Object.keys(TYPES);let a=[],i=0;
+function seed(){const hs=[[-0.9378,-52.4303,8],[-0.9430,-52.4365,5],[-0.9330,-52.4235,3]],ks=Object.keys(TYPES);let a=[],i=0;
   hs.forEach(([la,lo,n])=>{for(let k=0;k<n;k++)a.push({id:"s"+i++,lat:la+(rnd()-.5)*.006,lng:lo+(rnd()-.5)*.006,type:ks[(rnd()*ks.length)|0],desc:"Lixo acumulado na calçada",ts:Date.now()-rnd()*3.4e8,done:rnd()<.12,photo:""})});return a}
 const dist=(a,b)=>Math.hypot((a.lng-b.lng)*111320*Math.cos(a.lat*Math.PI/180),(a.lat-b.lat)*110540);
 
@@ -161,12 +161,12 @@ const store={
 
 /* ---------- Mapa (Leaflet + OpenStreetMap, sem chave) ---------- */
 function initMap(){map=L.map("map",{zoomControl:true}).setView([C0.lat,C0.lng],14);map.createPane("heat").style.zIndex=390;
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);map.on("click",closeSheet)}
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);map.on("click",closeSheet);new ResizeObserver(()=>map.invalidateSize()).observe($("#map"));setTimeout(()=>{map.invalidateSize();fitMap()},350)}
 function drawMap(){
   if(!map)return;const open=pts.filter(p=>!p.done);
   circles.forEach(c=>c.remove());circles=[];
-  if(showHeat)open.forEach(p=>{const n=open.filter(q=>dist(p,q)<150).length,c=n>=6?"#e62828":n>=4?"#f5821e":n>=2?"#fad728":"#2eb45a";
-    circles.push(L.circle([p.lat,p.lng],{pane:"heat",radius:140,stroke:false,fillColor:c,fillOpacity:.28,interactive:false}).addTo(map))});
+  if(showHeat)open.forEach(p=>{const n=open.filter(q=>dist(p,q)<300).length,c=n>=6?"#e62828":n>=4?"#f5821e":n>=2?"#fad728":"#2eb45a";
+    circles.push(L.circle([p.lat,p.lng],{pane:"heat",radius:260,stroke:false,fillColor:c,fillOpacity:.28,interactive:false}).addTo(map))});
   const ids=new Set(pts.map(p=>p.id));markers.forEach((m,id)=>{if(!ids.has(id)){m.remove();markers.delete(id)}});
   pts.forEach(p=>{const st={radius:p.done?7:9,fillColor:p.done?"#7fae8f":TYPES[p.type].c,fillOpacity:1,color:"#fff",weight:2.5,bubblingMouseEvents:false};let m=markers.get(p.id);
     if(m)m.setStyle(st);else{m=L.circleMarker([p.lat,p.lng],st).addTo(map);m.on("click",()=>openSheet(p.id));markers.set(p.id,m)}});
